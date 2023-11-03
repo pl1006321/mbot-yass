@@ -32,6 +32,26 @@ void moveforward(int d)
   redled(d); 
 }
 
+void movebackward(int d)
+{
+  motor1.run(100);
+  motor2.run(-100);
+  greenled(d);
+  delay(d); 
+  motor1.stop();
+  motor2.stop();
+  redled(d); 
+}
+
+void turn180(int d) // d = 1000 is optimal depending on surface
+{
+  motor1.run(100);
+  motor2.run(115); 
+  delay(d); 
+  motor1.stop();
+  motor2.stop();
+}
+
 void leftturn(int d)
 {
   motor1.run(110);
@@ -41,7 +61,7 @@ void leftturn(int d)
   motor2.stop(); 
 }
 
-void rightturn(int d)
+void rightturn(int d) // d = 1250 was optimal for this 
 {
   motor1.run(-100); 
   motor2.run(0);
@@ -51,15 +71,10 @@ void rightturn(int d)
 }
 
 void setup() {
-  // put your setup code here, to run once:
   pinMode(A7, INPUT);
 
   while (analogRead(A7) !=0);
-  moveforward(2000); 
-  rightturn(1250); 
+  // put code here 
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
-
-}
+void loop() {}
