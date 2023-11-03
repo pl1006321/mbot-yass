@@ -66,7 +66,7 @@ void rightturn(int d) // d = 1250 was optimal for this
   motor1.run(-100); 
   motor2.run(0);
   delay(d);
-  motor1.stop();
+  motor1.stop(); 
   motor2.stop(); 
 }
 
@@ -74,7 +74,12 @@ void setup() {
   pinMode(A7, INPUT);
 
   while (analogRead(A7) !=0);
-  // put code here 
+  moveforward(1250); 
+  rightturn(1250);
+  moveforward(1250); 
+  leftturn(1250);
+  moveforward(1250); 
+   
 }
 
 void loop() {}
