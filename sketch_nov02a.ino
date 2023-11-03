@@ -54,8 +54,8 @@ void turn180(int d) // d = 1000 is optimal depending on surface
 
 void leftturn(int d)
 {
-  motor1.run(110);
-  motor2.run(0);  
+  motor1.run(100);
+  motor2.run(100);  
   delay(d); 
   motor1.stop();
   motor2.stop(); 
@@ -64,7 +64,7 @@ void leftturn(int d)
 void rightturn(int d) // d = 1250 was optimal for this 
 {
   motor1.run(-100); 
-  motor2.run(0);
+  motor2.run(-100);
   delay(d);
   motor1.stop(); 
   motor2.stop(); 
@@ -74,11 +74,11 @@ void setup() {
   pinMode(A7, INPUT);
 
   while (analogRead(A7) !=0);
-  moveforward(1250); 
-  rightturn(1250);
-  moveforward(1250); 
-  leftturn(1250);
-  moveforward(1250); 
+  moveforward(1400); 
+  rightturn(560);
+  moveforward(1200); 
+  leftturn(580);
+  moveforward(1200); 
    
 }
 
