@@ -7,8 +7,6 @@ MeDCMotor motor2(M2);
 
 int value;
 
-
-
 void moveforward(int d) 
 { 
   motor1.run(-100);
@@ -27,11 +25,11 @@ void movebackward(int d)
   motor2.stop();
 }
 
-void spin(int d) // d = 1000 is optimal depending on surface
+void spin() // d = 1000 is optimal depending on surface
 {
-  motor1.run(100);
-  motor2.run(115); 
-  delay(); 
+  motor1.run(115);
+  motor2.run(100); 
+  delay(500); 
   motor1.stop();
   motor2.stop();
 }
@@ -107,8 +105,7 @@ void loop()
 
   else // (if value == 4)
   {
-    while (value == 4);
-    
+  spin();
   }
 
 }
