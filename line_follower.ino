@@ -5,7 +5,7 @@ MeLineFollower linefinder(PORT_2);
 MeDCMotor motor1(M1);
 MeDCMotor motor2(M2); 
 
-int value;
+int value, turnedalr; 
 int count = 0; 
 
 void moveforward(int d) 
@@ -40,6 +40,15 @@ void spinccw()
   motor1.run(100);
   motor2.run(115); 
   delay(100); 
+  motor1.stop();
+  motor2.stop();
+}
+
+void turn180() 
+{
+  motor1.run(100);
+  motor2.run(115); 
+  delay(750); 
   motor1.stop();
   motor2.stop();
 }
@@ -115,36 +124,20 @@ void loop()
 
   else if (value == 4)
   {
-  movebackward(100); 
-  spincw();
-    if (linefinder.readSensor1()==1 && linefinder.readSensor2()==0)
+    spincw(); 
+    if  (linefinder.readSensor1()==1 && linefinder.readSensor2()==1)
     {
-      moveforward(50);
       spinccw(); 
-    }
-
-    else if (linefinder.readSensor1()==0 && linefinder.readSensor2()==1)
-    {
-      moveforward(100);
-      spincw(); 
-    }
-
-    else if (linefinder.readSensor1()==1 && linefinder.readSensor2()==1)
-    {
-      motor1.stop();
-      motor2.stop();
-    }
-
-    else 
-    {
-      moveforward(100); 
-    }
-  }
-
-  else // if value == 5
-  {
-    movebackward(100);
-    spinccw();
-    
+      movebackward(50); 
+      if (linefinder.readSensor1()==1 && linefinder.readSensor2()==1)
+      {
+        motor1.stop();
+        motor2.stop();
+      }
+      else if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
+      {
+        value = 1; 
+      }
+    } 
   }
 }
