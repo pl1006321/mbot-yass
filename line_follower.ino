@@ -8,15 +8,6 @@ MeDCMotor motor2(M2);
 int value, turnedalr; 
 int count = 0; 
 
-void moveforward(int d) 
-{ 
-  motor1.run(-100);
-  motor2.run(100); 
-  delay(d+500); 
-  motor1.stop();
-  motor2.stop();  
-}
-
 void movebackward(int d)
 {
   motor1.run(100);
@@ -24,6 +15,15 @@ void movebackward(int d)
   delay(d); 
   motor1.stop();
   motor2.stop();
+}
+
+void moveforward(int d) 
+{ 
+  motor1.run(-100);
+  motor2.run(100); 
+  delay(d); 
+  motor1.stop();
+  motor2.stop();  
 }
 
 void spincw(int d) 
@@ -75,7 +75,7 @@ void right(int d) // d = 1250 was optimal for this
 
 void setup()
 {
-  Serial.begin(9600);
+  
 }
 
 void loop()
@@ -107,58 +107,40 @@ void loop()
     value = 4;
   }
 
-movement:
+  movement:
 
-switch (value) 
-{
-  case 1:
-    moveforward(100);
-    break; 
+  switch (value) 
+  {
+    case 1:
+      moveforward(100);
+  
+    case 2: 
+      right(100); 
+  
+    case 3:
+      left(100); 
+  
+    case 4:
+      while ((linefinder.readSensor1()!=0 && linefinder.readSensor2()!=0) && turnedalr == 0); 
+      {
+        spincw(100); 
+        if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
+        {
+          value = 1;
+          goto movement; 
+          turnedalr == 1; 
+        }
+      }
 
-  case 2: 
-    right(100); 
-    break;
-
-  case 3:
-    left(100); 
-    break;
-
-  case 4:
-    while (linefinder.readSensor1()!=0 || linefinder.readSensor2()!=0)
+      if (turnedalr==1)
+      {
+        spinccw(100); 
+        if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
+        {
+          value = 1;
+          goto movement; 
+        }
+      }
+  }
 
 }
-
-//  if (value == 1)
-//  {
-//    moveforward(100); 
-//  }
-//
-//  else if (value == 2)
-//  {
-//    right(100); 
-//  }
-//
-//  else if (value == 3)
-//  {
-//    left(100); 
-//  }
-//
-//  else if (value == 4)
-//  {
-//    spincw(); 
-//    if  (linefinder.readSensor1()==1 && linefinder.readSensor2()==1)
-//    {
-//      spinccw(); 
-//      movebackward(50); 
-//      if (linefinder.readSensor1()==1 && linefinder.readSensor2()==1)
-//      {
-//        motor1.stop();
-//        motor2.stop();
-//      }
-//      else if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
-//      {
-//        value = 1; 
-//      }
-//    } 
-//  }
-//}
