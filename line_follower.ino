@@ -12,7 +12,7 @@ void moveforward(int d)
 { 
   motor1.run(-100);
   motor2.run(100); 
-  delay(d); 
+  delay(d+500); 
   motor1.stop();
   motor2.stop();  
 }
@@ -26,20 +26,20 @@ void movebackward(int d)
   motor2.stop();
 }
 
-void spincw() 
+void spincw(int d) 
 {
   motor1.run(-100);
   motor2.run(-115); 
-  delay(100); 
+  delay(d); 
   motor1.stop();
   motor2.stop();
 }
 
-void spinccw() 
+void spinccw(int d) 
 {
   motor1.run(100);
   motor2.run(115); 
-  delay(100); 
+  delay(d); 
   motor1.stop();
   motor2.stop();
 }
@@ -107,37 +107,58 @@ void loop()
     value = 4;
   }
 
-  if (value == 1)
-  {
-    moveforward(100); 
-  }
+movement:
 
-  else if (value == 2)
-  {
+switch (value) 
+{
+  case 1:
+    moveforward(100);
+    break; 
+
+  case 2: 
     right(100); 
-  }
+    break;
 
-  else if (value == 3)
-  {
+  case 3:
     left(100); 
-  }
+    break;
 
-  else if (value == 4)
-  {
-    spincw(); 
-    if  (linefinder.readSensor1()==1 && linefinder.readSensor2()==1)
-    {
-      spinccw(); 
-      movebackward(50); 
-      if (linefinder.readSensor1()==1 && linefinder.readSensor2()==1)
-      {
-        motor1.stop();
-        motor2.stop();
-      }
-      else if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
-      {
-        value = 1; 
-      }
-    } 
-  }
+  case 4:
+    while (linefinder.readSensor1()!=0 || linefinder.readSensor2()!=0)
+
 }
+
+//  if (value == 1)
+//  {
+//    moveforward(100); 
+//  }
+//
+//  else if (value == 2)
+//  {
+//    right(100); 
+//  }
+//
+//  else if (value == 3)
+//  {
+//    left(100); 
+//  }
+//
+//  else if (value == 4)
+//  {
+//    spincw(); 
+//    if  (linefinder.readSensor1()==1 && linefinder.readSensor2()==1)
+//    {
+//      spinccw(); 
+//      movebackward(50); 
+//      if (linefinder.readSensor1()==1 && linefinder.readSensor2()==1)
+//      {
+//        motor1.stop();
+//        motor2.stop();
+//      }
+//      else if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
+//      {
+//        value = 1; 
+//      }
+//    } 
+//  }
+//}
