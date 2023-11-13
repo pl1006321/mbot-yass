@@ -73,17 +73,30 @@ void right(int d) // d = 1250 was optimal for this
   moveforward(100); 
 }
 
-void setup()
+void checkforstop()
 {
-  
+spincw(500); 
+  if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
+  {
+  goto movement; 
+  }
+spinccw(1000);
+  if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
+  {
+    goto movement;
+  }
+  if (linefinder.readSensor1()!=0 || linefinder.readSensor2()!=0)
+  {
+    motor1.stop();
+    motor2.stop();
+  }
 }
 
-void loop()
+void linesensor() 
+// black = blue light off = 0
+// white = blue light on = 1
 {
-  // black = blue light off = 0
-  // white = blue light on = 1
-
-  if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
+if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
   {
     Serial.println("Sensor 1 on black and Sensor 2 on black"); 
     value = 1; 
@@ -106,7 +119,17 @@ void loop()
     Serial.println("Sensor 1 on white and Sensor 2 on white"); 
     value = 4;
   }
+}
+return value; 
 
+void setup()
+{
+  Serial.begin(9600) 
+}
+
+void loop()
+{
+  linesensor(); 
   movement:
 
   switch (value) 
@@ -121,26 +144,5 @@ void loop()
       left(100); 
   
     case 4:
-      while ((linefinder.readSensor1()!=0 && linefinder.readSensor2()!=0) && turnedalr == 0); 
-      {
-        spincw(100); 
-        if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
-        {
-          value = 1;
-          goto movement; 
-          turnedalr == 1; 
-        }
-      }
-
-      if (turnedalr==1)
-      {
-        spinccw(100); 
-        if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
-        {
-          value = 1;
-          goto movement; 
-        }
-      }
-  }
-
+      checkforstop(); 
 }
