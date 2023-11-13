@@ -5,7 +5,7 @@ MeLineFollower linefinder(PORT_2);
 MeDCMotor motor1(M1);
 MeDCMotor motor2(M2); 
 
-int value, turnedalr; 
+int value, turned; 
 int count = 0; 
 
 void movebackward(int d)
@@ -73,25 +73,6 @@ void right(int d) // d = 1250 was optimal for this
   moveforward(100); 
 }
 
-void checkforstop()
-{
-spincw(500); 
-  if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
-  {
-  goto movement; 
-  }
-spinccw(1000);
-  if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
-  {
-    goto movement;
-  }
-  if (linefinder.readSensor1()!=0 || linefinder.readSensor2()!=0)
-  {
-    motor1.stop();
-    motor2.stop();
-  }
-}
-
 void linesensor() 
 // black = blue light off = 0
 // white = blue light on = 1
@@ -120,29 +101,66 @@ if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
     value = 4;
   }
 }
-return value; 
+
+void checkforstop()
+{
+spincw(560); 
+  if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
+  {
+    value=1;
+  }
+spinccw(1110);
+  if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
+  {
+    value=1;
+  }
+spincw(375);
+if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
+  {
+    value=1;
+  }
+  else
+  {
+    value=5;
+  }
+}
 
 void setup()
 {
-  Serial.begin(9600) 
+  Serial.begin(9600); 
 }
 
 void loop()
 {
-  linesensor(); 
+
+while (value!=5)
+{
+linesensor();
+
   movement:
 
   switch (value) 
   {
     case 1:
       moveforward(100);
+      break;
   
     case 2: 
       right(100); 
+      break;
   
     case 3:
       left(100); 
+      break;
   
     case 4:
       checkforstop(); 
+      if (value==5)
+      {
+        motor1.stop();
+        motor2.stop();
+      }
+      break;
+}
+}
 }
