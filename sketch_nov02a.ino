@@ -1,49 +1,41 @@
-#include <Arduino.h> 
+#include <Arduino.h>
 #include <MeMCore.h> 
 
+MeLineFollower linefinder(PORT_2);
 MeDCMotor motor1(M1);
 MeDCMotor motor2(M2); 
-MeRGBLed led(0,30); 
 
-void greenled(int d) 
-{
-  led.setpin(13); 
-  led.setColor(0,255,0); 
-  led.show(); 
-  delay(d); 
-}
+int value, turned; 
+int count = 0; 
 
-void redled(int d) 
+void movebackward(int d)
 {
-  led.setpin(13);
-  led.setColor(255,0,0);
-  led.show();
+  motor1.run(100);
+  motor2.run(-100);
   delay(d); 
+  motor1.stop();
+  motor2.stop();
 }
 
 void moveforward(int d) 
 { 
   motor1.run(-100);
   motor2.run(100); 
-  greenled(d);
   delay(d); 
   motor1.stop();
-  motor2.stop(); 
-  redled(d); 
+  motor2.stop();  
 }
 
-void movebackward(int d)
+void spincw(int d) 
 {
-  motor1.run(100);
-  motor2.run(-100);
-  greenled(d);
+  motor1.run(-100);
+  motor2.run(-100); 
   delay(d); 
   motor1.stop();
   motor2.stop();
-  redled(d); 
 }
 
-void turn180(int d) // d = 1000 is optimal depending on surface
+void spinccw(int d) 
 {
   motor1.run(100);
   motor2.run(115); 
@@ -52,34 +44,126 @@ void turn180(int d) // d = 1000 is optimal depending on surface
   motor2.stop();
 }
 
-void leftturn(int d)
+void turn180() 
+{
+  motor1.run(100);
+  motor2.run(115); 
+  delay(750); 
+  motor1.stop();
+  motor2.stop();
+}
+
+void left(int d)
 {
   motor1.run(100);
   motor2.run(100);  
-  delay(d); 
+  delay(100); 
   motor1.stop();
   motor2.stop(); 
+  moveforward(100); 
 }
 
-void rightturn(int d) // d = 1250 was optimal for this 
+void right(int d) // d = 1250 was optimal for this 
 {
   motor1.run(-100); 
   motor2.run(-100);
-  delay(d);
+  delay(100);
   motor1.stop(); 
   motor2.stop(); 
+  moveforward(100); 
 }
 
-void setup() {
-  pinMode(A7, INPUT);
+void linesensor() 
+// black = blue light off = 0
+// white = blue light on = 1
+{
+if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
+  {
+    Serial.println("Sensor 1 on black and Sensor 2 on black"); 
+    value = 1; 
+  }
 
-  while (analogRead(A7) !=0);
-  moveforward(1400); 
-  rightturn(560);
-  moveforward(1200); 
-  leftturn(580);
-  moveforward(1200); 
-   
+  else if (linefinder.readSensor1()==1 && linefinder.readSensor2()==0)
+  {
+    Serial.println("Sensor 1 on white and Sensor 2 on black"); 
+    value = 2;
+  }
+
+  else if (linefinder.readSensor1()==0 && linefinder.readSensor2()==1)
+  {
+    Serial.println("Sensor 1 on black and Sensor 2 on white"); 
+    value = 3; 
+  }
+
+  else // (linefinder.readSensor1()==1 && linefinder.readSensor2()==1)
+  {
+    Serial.println("Sensor 1 on white and Sensor 2 on white"); 
+    value = 4;
+  }
 }
 
-void loop() {}
+void checkforstop()
+{
+moveforward(210); 
+spincw(584); 
+motor1.stop();
+motor2.stop();
+  if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
+  {
+    value=1;
+  }
+spinccw(1050);
+  if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
+  {
+    value=1;
+  }
+spincw(375);
+if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
+  {
+    value=1;
+  }
+  else
+  {
+    value=5;
+  }
+}
+
+void setup()
+{
+  Serial.begin(9600); 
+}
+
+void loop()
+{
+
+while (value!=5)
+{
+linesensor();
+
+  movement:
+
+  switch (value) 
+  {
+    case 1:
+      moveforward(100);
+      break;
+  
+    case 2: 
+      right(100); 
+      break;
+  
+    case 3:
+      left(100); 
+      break;
+  
+    case 4:
+      checkforstop(); 
+      if (value==5)
+      {
+        motor1.stop();
+        motor2.stop();
+      }
+      break;
+}
+}
+}
