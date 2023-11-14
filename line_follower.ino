@@ -104,6 +104,7 @@ if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
 
 void checkforstop()
 {
+moveforward(100); 
 spincw(560); 
   if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
   {
