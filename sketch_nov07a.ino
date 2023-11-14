@@ -5,8 +5,7 @@ MeLineFollower linefinder(PORT_2);
 MeDCMotor motor1(M1);
 MeDCMotor motor2(M2); 
 
-int value, turned; 
-int count = 0; 
+int value;
 
 void movebackward(int d)
 {
