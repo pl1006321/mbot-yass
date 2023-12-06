@@ -1,11 +1,13 @@
 #include <Arduino.h>
 #include <MeMCore.h> 
 
+MeUltrasonicSensor ultrasonic(PORT_3);
 MeLineFollower linefinder(PORT_2);
 MeDCMotor motor1(M1);
 MeDCMotor motor2(M2); 
 
 int value, i; 
+float howfar; 
 
 void movebackward(int d)
 {
@@ -43,15 +45,6 @@ void spinccw(int d)
   motor2.stop();
 }
 
-void turn180() 
-{
-  motor1.run(100);
-  motor2.run(115); 
-  delay(750); 
-  motor1.stop();
-  motor2.stop();
-}
-
 void left(int d)
 {
   motor1.run(100);
@@ -78,25 +71,25 @@ void linesensor()
 {
 if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
   {
-    Serial.println("Sensor 1 on black and Sensor 2 on black"); 
+    // Serial.println("Sensor 1 on black and Sensor 2 on black"); 
     value = 1; 
   }
 
   else if (linefinder.readSensor1()==1 && linefinder.readSensor2()==0)
   {
-    Serial.println("Sensor 1 on white and Sensor 2 on black"); 
+    // Serial.println("Sensor 1 on white and Sensor 2 on black"); 
     value = 2;
   }
 
   else if (linefinder.readSensor1()==0 && linefinder.readSensor2()==1)
   {
-    Serial.println("Sensor 1 on black and Sensor 2 on white"); 
+    // Serial.println("Sensor 1 on black and Sensor 2 on white"); 
     value = 3; 
   }
 
   else // (linefinder.readSensor1()==1 && linefinder.readSensor2()==1)
   {
-    Serial.println("Sensor 1 on white and Sensor 2 on white"); 
+    // Serial.println("Sensor 1 on white and Sensor 2 on white"); 
     value = 4;
   }
 }
@@ -104,31 +97,26 @@ if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
 void checkforstop()
 {
 moveforward(300); 
-  for (i=0;i<5;i++) {
-    spinccw(35);
+  for (i=0;i<20;i++) {
+    spincw(35);
     linesensor();
     if (value==1) {
      return;
      } 
 }
-  for (i=0;i<10;i++) {
+  for (i=0;i<40;i++) {
     spinccw(35); 
     linesensor();
     if (value==1) {
       return; }
-    else value=5; 
-    return; 
 }
 }
 
-void setup()
-{
-  Serial.begin(9600); 
+void setup() {
+  Serial.begin(9600);
 }
 
-void loop()
-{
-
+void loop() {
 while (value!=5)
 {
 linesensor();
@@ -160,4 +148,7 @@ linesensor();
       break;
 }
 }
+
 }
+
+//you should make movement in a do while / for loop or wtv torture device and make it run the sensors between increments. if an object is sensed, theyll first talk to someone about it, but sooner or later people are going to find out
