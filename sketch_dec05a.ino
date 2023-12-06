@@ -5,15 +5,7 @@ MeLineFollower linefinder(PORT_2);
 MeDCMotor motor1(M1);
 MeDCMotor motor2(M2); 
 
-int value, sensedbothblack;
-int firstturncomplete = 0;
-int secondturncomplete = 0; 
-int thirdturncomplete = 0;
-int fourthturncomplete = 0; 
-int fifthturncomplete = 0; 
-int sixthturncomplete = 0; 
-int seventhturncomplete = 0; 
-int eighthturncomplete = 0;  
+int value, i; 
 
 void movebackward(int d)
 {
@@ -111,129 +103,22 @@ if (linefinder.readSensor1()==0 && linefinder.readSensor2()==0)
 
 void checkforstop()
 {
-sensedbothblack = 0;
-if (firstturncomplete != 1) {
-  moveforward(300); 
-  do {
+moveforward(300); 
+  for (i=0;i<5;i++) {
     spincw(35);
     linesensor();
     if (value==1) {
-     sensedbothblack = 1;
-     firstturncomplete = 1;  
-     value = 1;
      break;
-    }
-  } while (sensedbothblack != 1); 
+     } 
 }
-
-if (secondturncomplete != 1) {
-  sensedbothblack = 0;
-  moveforward(300); 
-  do {
-    spinccw(35);
+  for (i=0;i<10;i++) {
+    spinccw(35); 
     linesensor();
     if (value==1) {
-     sensedbothblack = 1;
-     secondturncomplete = 1;  
-     value = 1;
-     break;
-    }
-  } while (sensedbothblack != 1); 
+      return; }
+    else value=5; 
+    return; 
 }
-  
-if (thirdturncomplete != 1) {
-  sensedbothblack = 0;
-  moveforward(300); 
-  do {
-    spincw(35);
-    linesensor();
-    if (value==1) {
-     sensedbothblack = 1;
-     thirdturncomplete = 1;  
-     value = 1;
-     break;
-    }
-  } while (sensedbothblack != 1); 
-}
-  
-if (fourthturncomplete != 1) {
-  sensedbothblack = 0;
-  moveforward(300); 
-  do {
-    spincw(35);
-    linesensor();
-    if (value==1) {
-     sensedbothblack = 1;
-     fourthturncomplete = 1;  
-     value = 1;
-     break;
-    }
-  } while (sensedbothblack != 1); 
-}
-  
-if (fifthturncomplete != 1) {
-  sensedbothblack = 0;
-  moveforward(300); 
-  do {
-    spinccw(35);
-    linesensor();
-    if (value==1) {
-     sensedbothblack = 1;
-     fifthturncomplete = 1;  
-     value = 1;
-     break;
-    }
-  } while (sensedbothblack != 1); 
-}
-  
-if (sixthturncomplete != 1) {
-  sensedbothblack = 0;
-  moveforward(300); 
-  do {
-    spinccw(35);
-    linesensor();
-    if (value==1) {
-     sensedbothblack = 1;
-     sixthturncomplete = 1;  
-     value = 1;
-     break;
-    }
-  } while (sensedbothblack != 1); 
-}
-  
-if (seventhturncomplete != 1) {
-  sensedbothblack = 0;
-  moveforward(300); 
-  do {
-    spinccw(35);
-    linesensor();
-    if (value==1) {
-     sensedbothblack = 1;
-     seventhturncomplete = 1;  
-     value = 1;
-     break;
-    }
-  } while (sensedbothblack != 1); 
-}
-  
-if (eighthturncomplete != 1) {
-  sensedbothblack = 0;
-  moveforward(300); 
-  do {
-    spincw(35);
-    linesensor();
-    if (value==1) {
-     sensedbothblack = 1;
-     eighthturncomplete = 1;  
-     value = 1;
-     break; 
-    }
-  } while (sensedbothblack != 1); 
-}
-
-value=5; 
-return;
-
 }
 
 void setup()
@@ -277,4 +162,3 @@ linesensor();
 }
 }
 
-//make it so that in every cehck for stop, first turn right 2-3 times, then if it is still on white white, turn the other way 2-3 times so it isnt hardcoded
