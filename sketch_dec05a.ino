@@ -105,10 +105,10 @@ void checkforstop()
 {
 moveforward(300); 
   for (i=0;i<5;i++) {
-    spincw(35);
+    spinccw(35);
     linesensor();
     if (value==1) {
-     break;
+     return;
      } 
 }
   for (i=0;i<10;i++) {
@@ -161,4 +161,3 @@ linesensor();
 }
 }
 }
-
