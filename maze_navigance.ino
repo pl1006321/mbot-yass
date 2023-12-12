@@ -1,11 +1,12 @@
 #include <Arduino.h>
 #include <MeMCore.h> 
+#include <Math.h>
 
 MeUltrasonicSensor ultrasonic(PORT_3);
-MeDCMotor motor1(M1);
-MeDCMotor motor2(M2);
+MeDCMotor motor1(M1); 
+MeDCMotor motor2(M2); 
 
-int leftdistance, rightdistance, howfar, frontdistance;
+int front, left, right;
 
 void movebackward(int d)
 {
@@ -43,7 +44,7 @@ void spinccw(int d)
   motor2.stop();
 }
 
-void left(int d)
+void moveleft(int d)
 {
   motor1.run(100);
   motor2.run(100);  
@@ -53,7 +54,7 @@ void left(int d)
   moveforward(100); 
 }
 
-void right(int d) // d = 1250 was optimal for this 
+void moveright(int d) // d = 1250 was optimal for this 
 {
   motor1.run(-100); 
   motor2.run(-100);
@@ -63,34 +64,39 @@ void right(int d) // d = 1250 was optimal for this
   moveforward(100); 
 }
 
-void leftdistancechecker()
+void checkdistance()
 {
-  leftdistance = ultrasonic.distanceCm(); 
-  Serial.println(leftdistance);
-  return;
-}
-
-void rightdistancechecker()
-{
-  rightdistance = ultrasonic.distanceCm(); 
-  Serial.println(rightdistance);
-  return;
-}
-
-void frontwallchecker()
-{
-  frontdistance = ultrasonic.distanceCm(); 
-  Serial.println(frontdistance); 
-  return; 
-}
-
-void checkdistance() // this is vetted and works!!
-{
-  spincw(800); 
-  rightdistancechecker();
-  spinccw(1450);
-  leftdistancechecker();
   spincw(800);
+  right = ultrasonic.distanceCm();
+  if (right >= 10)
+  {
+    return;
+  }
+  spinccw(1450);
+  left = ultrasonic.distanceCm(); 
+  if (left >= 10)
+  {
+    return;
+  }
+  spincw(800); 
+  motor1.stop();
+  motor2.stop();
+  delay(100);
+}
+
+void frontdistance()
+{
+  front = ultrasonic.distanceCm();
+  Serial.println(front);
+}
+
+void deadend()
+{
+  do 
+  {
+  movebackward(200);
+  checkdistance();
+  } while ((abs(right - left)) <= 10);
 }
 
 void setup()
@@ -99,18 +105,29 @@ void setup()
 }
 
 void loop()
-{ 
-  moveforward(500); 
-  frontwallchecker();
-  if (frontdistance <= 5); 
+{
+  moveforward(400);
+  frontdistance(); 
+  if (front <= 8)
   {
     checkdistance();
-    if (rightdistance > leftdistance)
+//    if ((abs(right - left)) <= 10)
+//    {
+//      deadend();
+//      if (right > left)
+//      {
+//       spincw(800);
+//       return; 
+//      } 
+//      else spinccw(800);
+//      return; 
+//    }
+    if (right > left && (abs(right - left)) >= 10)
     {
       spincw(800);
+      return; 
     }
-
-    else 
-    spinccw(800);
-  }
+    else spinccw(725);
+    return; 
+}
 }
