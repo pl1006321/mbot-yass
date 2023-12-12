@@ -2,12 +2,10 @@
 #include <MeMCore.h> 
 
 MeUltrasonicSensor ultrasonic(PORT_3);
-MeLineFollower linefinder(PORT_2);
 MeDCMotor motor1(M1); 
 MeDCMotor motor2(M2); 
 
-int value, i; 
-float howfar; 
+int front, left, right;
 
 void movebackward(int d)
 {
@@ -45,7 +43,7 @@ void spinccw(int d)
   motor2.stop();
 }
 
-void left(int d)
+void moveleft(int d)
 {
   motor1.run(100);
   motor2.run(100);  
@@ -55,7 +53,7 @@ void left(int d)
   moveforward(100); 
 }
 
-void right(int d) // d = 1250 was optimal for this 
+void moveright(int d) // d = 1250 was optimal for this 
 {
   motor1.run(-100); 
   motor2.run(-100);
@@ -65,89 +63,65 @@ void right(int d) // d = 1250 was optimal for this
   moveforward(100); 
 }
 
-void checkforstop()
+void checkdistance()
 {
-moveforward(300); 
-  for (i=0;i<20;i++) {
-    spincw(35);
-    if (value==1) {
-     return;
-     } 
-}
-  for (i=0;i<40;i++) {
-    spinccw(35); 
-    if (value==1) {
-      return; }
-}
+  spincw(800);
+  right = ultrasonic.distanceCm();
+  spinccw(1450);
+  left = ultrasonic.distanceCm(); 
+  spincw(800); 
+  motor1.stop();
+  motor2.stop();
+  delay(100);
 }
 
-void 
-
-void distancechecker()
+void frontdistance()
 {
-  howfar = ultrasonic.distanceCm(); 
-  Serial.println(howfar);
-  return;
+  front = ultrasonic.distanceCm();
+  Serial.println(front);
 }
 
-void avoiding()
+void deadend()
 {
-  if (howfar <= 7)
+  do 
   {
-    motor1.stop();
-    motor2.stop();
-    spincw(450);
-    moveforward(1300);
-    spinccw(700);
-    moveforward(1400);
-    checkforstop();
-    return;
-  }
- return;
+  movebackward(100);
+  checkdistance();
+  } while ((abs(right - left)) <= 5)
 }
 
-void setup() {
-    Serial.begin(9600);
-}
-
-void loop() {
-while (value!=5)
+void setup()
 {
-linesensor();
-
- movement:
-
- switch (value) 
- {
-   case 1:
-     moveforward(100);
-     obstaclechecker();
-     avoiding();
-     break;
- 
-   case 2: 
-     right(100); 
-     obstaclechecker();
-     avoiding();
-     break;
- 
-   case 3:
-     left(100); 
-     obstaclechecker();
-     avoiding();
-     break;
- 
-   case 4:
-     checkforstop(); 
-     if (value==5)
-     {
-       motor1.stop();
-       motor2.stop();
-     }
-     
-     break;
-}
+  Serial.begin(9600);
 }
 
-
+void loop()
+{
+  moveforward(400);
+  frontdistance(); 
+  if (front <= 10)
+  {
+    checkdistance();
+    if ((abs(right - left)) <= 5)
+    {
+      deadend();
+      if (right > left)
+      {
+       spincw(800);
+       return; 
+      } 
+      else spinccw(800);
+      return; 
+    }
+    else spinccw(800);
+    return; 
+    }
+    if (right > left)
+    {
+      spincw(800);
+      return; 
+    }
+    else spinccw(800);
+    return; 
+  }
 }
