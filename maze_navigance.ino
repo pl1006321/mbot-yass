@@ -19,8 +19,8 @@ void movebackward(int d)
 
 void moveforward(int d) 
 { 
-  motor1.run(-100);
-  motor2.run(100); 
+  motor1.run(-150);
+  motor2.run(150); 
   delay(d); 
   motor1.stop();
   motor2.stop();  
@@ -64,39 +64,55 @@ void moveright(int d) // d = 1250 was optimal for this
   moveforward(100); 
 }
 
-void checkdistance()
+void spinnything()
 {
-  spincw(800);
+  spinccw(800);
+  motor1.stop();
+  motor2.stop();
   right = ultrasonic.distanceCm();
-  if (right >= 10)
+  spincw(1450);
+  motor1.stop();
+  motor2.stop();
+  left = ultrasonic.distanceCm();
+  spinccw(800); 
+  motor1.stop();
+  motor2.stop();
+}
+
+void deadend()
+{
+  do
+  {
+    spinnything();
+  } while ((abs(right-left)) <= 7);
+  return;
+}
+
+void navigate()
+{
+  spinccw(800);
+  right = ultrasonic.distanceCm();
+  if (right >= 7)
   {
     return;
   }
-  spinccw(1450);
+  spincw(1350);
   left = ultrasonic.distanceCm(); 
-  if (left >= 10)
+  if (left >= 7)
   {
     return;
   }
-  spincw(800); 
+  spincw(750); 
   motor1.stop();
   motor2.stop();
   delay(100);
+  deadend();
 }
 
 void frontdistance()
 {
   front = ultrasonic.distanceCm();
   Serial.println(front);
-}
-
-void deadend()
-{
-  do 
-  {
-  movebackward(200);
-  checkdistance();
-  } while ((abs(right - left)) <= 10);
 }
 
 void setup()
@@ -106,28 +122,11 @@ void setup()
 
 void loop()
 {
-  moveforward(400);
+  moveforward(50);
   frontdistance(); 
-  if (front <= 8)
+  if (front <= 6)
   {
-    checkdistance();
-//    if ((abs(right - left)) <= 10)
-//    {
-//      deadend();
-//      if (right > left)
-//      {
-//       spincw(800);
-//       return; 
-//      } 
-//      else spinccw(800);
-//      return; 
-//    }
-    if (right > left && (abs(right - left)) >= 10)
-    {
-      spincw(800);
-      return; 
-    }
-    else spinccw(725);
-    return; 
-}
+    navigate();
+    return;
+  }
 }
