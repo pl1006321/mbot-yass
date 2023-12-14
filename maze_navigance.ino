@@ -64,6 +64,13 @@ void moveright(int d) // d = 1250 was optimal for this
   moveforward(100); 
 }
 
+void stopping(int d)
+{
+  motor1.run(0);
+  motor2.run(0);
+  delay(d);
+}
+
 void spinnything()
 {
   spinccw(800);
@@ -90,22 +97,22 @@ void deadend()
 
 void navigate()
 {
-  spinccw(800);
+  spinccw(700);
+  stopping(100);
   right = ultrasonic.distanceCm();
   if (right >= 7)
   {
     return;
   }
-  spincw(1350);
+  spincw(1100);
+  stopping(100);
   left = ultrasonic.distanceCm(); 
   if (left >= 7)
   {
     return;
   }
-  spincw(750); 
-  motor1.stop();
-  motor2.stop();
-  delay(100);
+  spincw(700); 
+  stopping(100);
   deadend();
 }
 
@@ -124,8 +131,9 @@ void loop()
 {
   moveforward(50);
   frontdistance(); 
-  if (front <= 6)
+  if (front <= 8)
   {
+    stopping(100);
     navigate();
     return;
   }
